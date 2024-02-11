@@ -22,7 +22,7 @@ public class ForumApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return userRepository::findUserDTOByUsername;
+        return userRepository::findUserByUsername;
     }
 
     @Bean

@@ -45,7 +45,7 @@ public class PostController {
     public ResponseEntity<GetPostResponse> getPost(GetPostRequest request) {
         Post post = service.getPostById(request.getId());
         if (post == null) {
-            return ResponseEntity.ok(new GetPostResponse());
+            return ResponseEntity.notFound().build();
         }
         GetPostResponse response = new GetPostResponse(new PostDTO(post));
         return ResponseEntity.ok(response);

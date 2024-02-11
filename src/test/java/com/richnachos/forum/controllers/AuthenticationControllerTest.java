@@ -5,6 +5,7 @@ import com.richnachos.forum.ForumApplication;
 import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
 import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
 import com.richnachos.forum.repositories.UserRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -39,6 +40,11 @@ public class AuthenticationControllerTest {
     private UserRepository userRepository;
     private final String username = "user";
     private final String password = "password";
+
+    @AfterAll
+    public void cleanup() {
+        userRepository.deleteAll();
+    }
 
     @BeforeEach
     public void flushDatabase() {

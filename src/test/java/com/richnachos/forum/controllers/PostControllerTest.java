@@ -73,6 +73,7 @@ public class PostControllerTest {
     }
 
     @BeforeEach
+    @AfterAll
     public void flushDatabase() {
         postRepository.deleteAll();
         userRepository.deleteAll();
@@ -138,6 +139,13 @@ public class PostControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.post.title", is("title_0")));
+    }
+
+    @Test
+    public void getNonexistentPost() throws Exception {
+        mvc.perform(get("/posts/0")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
     }
 
     @Test

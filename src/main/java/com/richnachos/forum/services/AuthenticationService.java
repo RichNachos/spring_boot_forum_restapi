@@ -23,7 +23,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse register(RegisterRequest request) {
 
-        if (userRepository.findUserDTOByUsername(request.getUsername()) != null) {
+        if (userRepository.findUserByUsername(request.getUsername()) != null) {
             return AuthenticationResponse.builder()
                     .token("")
                     .build();
@@ -49,7 +49,7 @@ public class AuthenticationService {
                         request.getPassword()
                 )
         );
-        User user = userRepository.findUserDTOByUsername(request.getUsername());
+        User user = userRepository.findUserByUsername(request.getUsername());
         String jwtToken = jwtService.generateToken(user);
 
         return AuthenticationResponse.builder()

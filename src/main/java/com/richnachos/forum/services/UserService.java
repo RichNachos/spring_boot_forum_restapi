@@ -20,7 +20,7 @@ public class UserService {
     }
 
     public User getUserByUsername(String username) {
-        return userRepository.findUserDTOByUsername(username);
+        return userRepository.findUserByUsername(username);
     }
 
     public List<User> getAllUsers() {
@@ -36,6 +36,7 @@ public class UserService {
         if (currentUser.getRole() == Role.USER) return false;
         if (user.getRole() == Role.ADMIN) return false;
         user.setRole(Role.ADMIN);
+        userRepository.save(user);
         return true;
     }
 
@@ -46,6 +47,7 @@ public class UserService {
         if (currentUser.getRole() == Role.USER) return false;
         if (user.getRole() == Role.USER) return false;
         user.setRole(Role.USER);
+        userRepository.save(user);
         return true;
     }
 

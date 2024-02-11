@@ -1,19 +1,17 @@
 package com.richnachos.forum.controllers.user;
 
 import com.richnachos.forum.controllers.user.http.deleteuserbyid.DeleteUserByIdRequest;
-import com.richnachos.forum.controllers.user.http.deleteuserbyid.DeleteUserByIdResponse;
 import com.richnachos.forum.controllers.user.http.demoteuserbyid.DemoteUserByIdRequest;
-import com.richnachos.forum.controllers.user.http.demoteuserbyid.DemoteUserByIdResponse;
 import com.richnachos.forum.controllers.user.http.getallusers.GetAllUsersResponse;
 import com.richnachos.forum.controllers.user.http.getuserbyid.GetUserByIdRequest;
 import com.richnachos.forum.controllers.user.http.getuserbyid.GetUserByIdResponse;
 import com.richnachos.forum.controllers.user.http.getuserbyusername.GetUserByUsernameRequest;
 import com.richnachos.forum.controllers.user.http.getuserbyusername.GetUserByUsernameResponse;
 import com.richnachos.forum.controllers.user.http.promoteuserbyid.PromoteUserByIdRequest;
-import com.richnachos.forum.controllers.user.http.promoteuserbyid.PromoteUserByIdResponse;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,33 +39,47 @@ public class UserController {
 
     @GetMapping("/users/id={id}")
     public ResponseEntity<GetUserByIdResponse> getUserById(GetUserByIdRequest request) {
-        UserDTO userDTO = new UserDTO(userService.getUserById(request.getId()));
+        User user = userService.getUserById(request.getId());
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDTO userDTO = new UserDTO(user);
         GetUserByIdResponse response = new GetUserByIdResponse(userDTO);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/users/username={username}")
     public ResponseEntity<GetUserByUsernameResponse> getUserByUsername(GetUserByUsernameRequest request) {
-        UserDTO userDTO = new UserDTO(userService.getUserByUsername(request.getUsername()));
+        User user = userService.getUserByUsername(request.getUsername());
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+        UserDTO userDTO = new UserDTO(user);
         GetUserByUsernameResponse response = new GetUserByUsernameResponse(userDTO);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/users/{id}/promote")
-    public ResponseEntity<PromoteUserByIdResponse> promoteUserById(PromoteUserByIdRequest request) {
-        PromoteUserByIdResponse response = new PromoteUserByIdResponse(userService.promoteUserById(request.getId()));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> promoteUserById(PromoteUserByIdRequest request) {
+        if (!userService.promoteUserById(request.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/users/{id}/demote")
-    public ResponseEntity<DemoteUserByIdResponse> DemoteUserById(DemoteUserByIdRequest request) {
-        DemoteUserByIdResponse response = new DemoteUserByIdResponse(userService.demoteUserById(request.getId()));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> demoteUserById(DemoteUserByIdRequest request) {
+        if (!userService.demoteUserById(request.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<DeleteUserByIdResponse> deleteUserById(DeleteUserByIdRequest request) {
-        DeleteUserByIdResponse response = new DeleteUserByIdResponse(userService.deleteUserById(request.getId()));
-        return ResponseEntity.ok(response);
+    public ResponseEntity<Void> deleteUserById(DeleteUserByIdRequest request) {
+        if (!userService.deleteUserById(request.getId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        return ResponseEntity.ok().build();
     }
 }
