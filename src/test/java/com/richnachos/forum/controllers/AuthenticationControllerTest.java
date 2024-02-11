@@ -132,4 +132,17 @@ public class AuthenticationControllerTest {
                         .content(mapper.writeValueAsBytes(request1)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    public void authenticateNonexistentUser() throws Exception {
+        AuthenticationRequest request = AuthenticationRequest.builder()
+                .username(username)
+                .password(password)
+                .build();
+
+        mvc.perform(post("/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isForbidden());
+    }
 }
