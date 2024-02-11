@@ -215,7 +215,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void TryDeletePostFromWrongUser() throws Exception {
+    public void tryDeletePostFromWrongUser() throws Exception {
         addUser(0);
         addUser(1);
         addPost(0);
@@ -233,7 +233,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void TryDeletePostFromAdmin() throws Exception {
+    public void tryDeletePostFromAdmin() throws Exception {
         addUser(0);
         addUser(2);
         addPost(0);
@@ -251,7 +251,7 @@ public class PostControllerTest {
     }
 
     @Test
-    public void TryDeleteWithoutAuthentication() throws Exception {
+    public void tryDeleteWithoutAuthentication() throws Exception {
         addUser(0);
         addPost(0);
 
