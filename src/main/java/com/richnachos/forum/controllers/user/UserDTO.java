@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.dtos;
+package com.richnachos.forum.controllers.user;
 
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.richnachos.forum.entities.Role;

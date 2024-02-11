@@ -1,30 +1,33 @@
 package com.richnachos.forum.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 import com.richnachos.forum.ForumApplication;
+import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
+import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
+import com.richnachos.forum.controllers.post.http.newpost.AddPostRequest;
 import com.richnachos.forum.entities.Post;
 import com.richnachos.forum.entities.Role;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.repositories.PostRepository;
 import com.richnachos.forum.repositories.UserRepository;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.hamcrest.Matchers;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,6 +46,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PostControllerTest {
     @Autowired
     private MockMvc mvc;
+    @Autowired
+    private ObjectMapper mapper;
     @Autowired
     private PostRepository postRepository;
     @Autowired
@@ -128,12 +133,6 @@ public class PostControllerTest {
         addUser(0);
         addPost(0);
 
-//        MvcResult result = mvc.perform(get("/posts")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.posts[0].id");
-
         Long id = postRepository.findAll().iterator().next().getId();
         mvc.perform(get("/posts/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -147,12 +146,6 @@ public class PostControllerTest {
         addPost(0);
         addPost(1);
 
-//        MvcResult result = mvc.perform(get("/posts")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.posts[0].id");
-
         Long id = userRepository.findAll().iterator().next().getId();
         mvc.perform(get("/posts/user/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -162,18 +155,144 @@ public class PostControllerTest {
                 .andExpect(jsonPath("$.posts[1].posterUsername", is(users.get(0).getUsername())));
     }
 
-    // Get i-th users token
-//    private String getToken(int i) throws Exception {
-//        MvcResult result = mvc.perform(get("/authenticate")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .content(new StringBuilder()
-//                                .append("{\"username\":\"user" + i + ",")
-//                                .append("\"password:\"")
-//                                .toString()))
-//                .andExpect(status().isOk())
-//                .andReturn();
-//        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.posts[0].id");
-//    }
+    @Test
+    public void addPostAndFetch() throws Exception {
+        String token = register(0);
+
+        AddPostRequest request = AddPostRequest.builder()
+                .title(posts.get(0).getTitle())
+                .text(posts.get(0).getText())
+                .build();
+
+        MvcResult result = mvc.perform(post("/posts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.notNullValue()))
+                .andReturn();
+
+        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+        Assertions.assertTrue(postRepository.findById(Integer.toUnsignedLong(id)).isPresent());
+        Post post = postRepository.findById(Integer.toUnsignedLong(id)).get();
+        Assertions.assertNotNull(post);
+        Assertions.assertEquals(post.getId(), id);
+        Assertions.assertEquals(post.getTitle(), posts.get(0).getTitle());
+    }
+
+    @Test
+    public void addPostAndDelete() throws Exception {
+        String token = register(0);
+
+        AddPostRequest request = AddPostRequest.builder()
+                .title(posts.get(0).getTitle())
+                .text(posts.get(0).getText())
+                .build();
+
+        MvcResult result = mvc.perform(post("/posts/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", Matchers.notNullValue()))
+                .andReturn();
+
+        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+        Assertions.assertTrue(postRepository.findById(Integer.toUnsignedLong(id)).isPresent());
+
+        mvc.perform(delete("/posts/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deleted", is(true)));
+
+        Assertions.assertFalse(postRepository.findAll().iterator().hasNext());
+        mvc.perform(delete("/posts/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deleted", is(false)));
+    }
+
+    @Test
+    public void TryDeletePostFromWrongUser() throws Exception {
+        addUser(0);
+        addUser(1);
+        addPost(0);
+
+        String token = authenticate(1);
+
+        Long id = postRepository.findAll().iterator().next().getId();
+        mvc.perform(delete("/posts/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deleted", is(false)));
+
+        Assertions.assertEquals(id, postRepository.findAll().iterator().next().getId());
+    }
+
+    @Test
+    public void TryDeletePostFromAdmin() throws Exception {
+        addUser(0);
+        addUser(2);
+        addPost(0);
+
+        String token = authenticate(2);
+
+        Long id = postRepository.findAll().iterator().next().getId();
+        mvc.perform(delete("/posts/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.deleted", is(true)));
+
+        Assertions.assertFalse(postRepository.findAll().iterator().hasNext());
+    }
+
+    @Test
+    public void TryDeleteWithoutAuthentication() throws Exception {
+        addUser(0);
+        addPost(0);
+
+        Long id = postRepository.findAll().iterator().next().getId();
+        mvc.perform(delete("/posts/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isForbidden());
+    }
+
+    // Get i-th user's token
+    private String authenticate(int i) throws Exception {
+        AuthenticationRequest request = AuthenticationRequest.builder()
+                .username(users.get(i).getUsername())
+                .password(password)
+                .build();
+
+        MvcResult result = mvc.perform(post("/auth/authenticate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", startsWith("ey")))
+                .andReturn();
+
+        return "Bearer " + JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+    }
+
+    // Register i-th user and return token
+    private String register(int i) throws Exception {
+        RegisterRequest request = RegisterRequest.builder()
+                .username(users.get(i).getUsername())
+                .password(password)
+                .build();
+
+        MvcResult result = mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", startsWith("ey")))
+                .andReturn();
+        return "Bearer " + JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+    }
 
     private void addUser(int i) {
         userRepository.save(users.get(i));

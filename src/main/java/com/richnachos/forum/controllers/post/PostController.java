@@ -1,6 +1,5 @@
 package com.richnachos.forum.controllers.post;
 
-import com.richnachos.forum.controllers.dtos.PostDTO;
 import com.richnachos.forum.controllers.post.http.deletepost.DeletePostRequest;
 import com.richnachos.forum.controllers.post.http.deletepost.DeletePostResponse;
 import com.richnachos.forum.controllers.post.http.getallposts.GetAllPostsResponse;
@@ -8,8 +7,8 @@ import com.richnachos.forum.controllers.post.http.getpost.GetPostRequest;
 import com.richnachos.forum.controllers.post.http.getpost.GetPostResponse;
 import com.richnachos.forum.controllers.post.http.getpostbyuserid.GetPostsByUserIdRequest;
 import com.richnachos.forum.controllers.post.http.getpostbyuserid.GetPostsByUserIdResponse;
-import com.richnachos.forum.controllers.post.http.newpost.NewPostRequest;
-import com.richnachos.forum.controllers.post.http.newpost.NewPostResponse;
+import com.richnachos.forum.controllers.post.http.newpost.AddPostRequest;
+import com.richnachos.forum.controllers.post.http.newpost.AddPostResponse;
 import com.richnachos.forum.entities.Post;
 import com.richnachos.forum.services.PostService;
 import lombok.RequiredArgsConstructor;
@@ -26,9 +25,9 @@ public class PostController {
     private final PostService service;
 
     @PostMapping("/posts/add")
-    public ResponseEntity<NewPostResponse> addPost(@RequestBody NewPostRequest request) {
+    public ResponseEntity<AddPostResponse> addPost(@RequestBody AddPostRequest request) {
         Long id = service.savePost(request.getTitle(), request.getText());
-        return ResponseEntity.ok(new NewPostResponse(id));
+        return ResponseEntity.ok(new AddPostResponse(id));
     }
 
     @GetMapping("/posts")

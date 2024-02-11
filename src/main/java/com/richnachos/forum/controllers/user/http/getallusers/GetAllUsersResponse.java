@@ -1,6 +1,6 @@
 package com.richnachos.forum.controllers.user.http.getallusers;
 
-import com.richnachos.forum.controllers.dtos.UserDTO;
+import com.richnachos.forum.controllers.user.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

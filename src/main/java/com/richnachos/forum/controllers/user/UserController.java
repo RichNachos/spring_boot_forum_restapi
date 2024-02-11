@@ -1,6 +1,5 @@
 package com.richnachos.forum.controllers.user;
 
-import com.richnachos.forum.controllers.dtos.UserDTO;
 import com.richnachos.forum.controllers.user.http.deleteuserbyid.DeleteUserByIdRequest;
 import com.richnachos.forum.controllers.user.http.deleteuserbyid.DeleteUserByIdResponse;
 import com.richnachos.forum.controllers.user.http.demoteuserbyid.DemoteUserByIdRequest;

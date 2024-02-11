@@ -7,8 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class NewPostResponse {
-    private Long id;
+@AllArgsConstructor
+public class AddPostRequest {
+    private String title;
+    private String text;
 }

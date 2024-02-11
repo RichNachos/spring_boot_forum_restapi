@@ -1,6 +1,6 @@
 package com.richnachos.forum.controllers.post.http.getpostbyuserid;
 
-import com.richnachos.forum.controllers.dtos.PostDTO;
+import com.richnachos.forum.controllers.post.PostDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
