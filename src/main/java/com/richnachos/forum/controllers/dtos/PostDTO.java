@@ -1,5 +1,6 @@
-package com.richnachos.forum.controllers.post.common;
+package com.richnachos.forum.controllers.dtos;
 
+import com.fasterxml.jackson.annotation.JsonRootName;
 import com.richnachos.forum.entities.Post;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import java.util.Date;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonRootName(value = "post")
 public class PostDTO {
     private Long id;
     private String title;

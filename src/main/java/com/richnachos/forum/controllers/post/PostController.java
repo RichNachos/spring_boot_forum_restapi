@@ -1,6 +1,6 @@
 package com.richnachos.forum.controllers.post;
 
-import com.richnachos.forum.controllers.post.common.PostDTO;
+import com.richnachos.forum.controllers.dtos.PostDTO;
 import com.richnachos.forum.controllers.post.http.deletepost.DeletePostRequest;
 import com.richnachos.forum.controllers.post.http.deletepost.DeletePostResponse;
 import com.richnachos.forum.controllers.post.http.getallposts.GetAllPostsResponse;
@@ -68,6 +68,4 @@ public class PostController {
         boolean deleted = service.deletePostById(request.getId());
         return ResponseEntity.ok(new DeletePostResponse(deleted));
     }
-
-
 }

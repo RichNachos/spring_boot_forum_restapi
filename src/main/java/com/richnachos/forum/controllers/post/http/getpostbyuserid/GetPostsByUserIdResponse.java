@@ -1,6 +1,6 @@
 package com.richnachos.forum.controllers.post.http.getpostbyuserid;
 
-import com.richnachos.forum.controllers.post.common.PostDTO;
+import com.richnachos.forum.controllers.dtos.PostDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GetPostsByUserIdResponse {
-    private List<PostDTO> postDTOS;
+    private List<PostDTO> posts;
 }

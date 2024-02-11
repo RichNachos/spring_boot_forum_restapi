@@ -1,6 +1,6 @@
 package com.richnachos.forum.controllers.user.http.getuserbyusername;
 
-import com.richnachos.forum.controllers.user.common.UserDTO;
+import com.richnachos.forum.controllers.dtos.UserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetUserByUsernameResponse {
-    private UserDTO userDTO;
+    private UserDTO user;
 }

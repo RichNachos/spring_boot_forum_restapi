@@ -4,6 +4,7 @@ import com.richnachos.forum.configs.auth.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -25,11 +26,11 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((auth) -> {
                             auth
-                                    .requestMatchers("/auth/**")
+                                    .requestMatchers(HttpMethod.POST, "/auth/**")
                                     .permitAll()
-                                    .requestMatchers("/posts", "/posts/user/{id}", "/posts/{id}")
+                                    .requestMatchers(HttpMethod.GET, "/posts", "/posts/user/{id}", "/posts/{id}")
                                     .permitAll()
-                                    .requestMatchers("/users", "/users/{id}", "/users/{username}")
+                                    .requestMatchers(HttpMethod.GET, "/users", "/users/{id}", "/users/{username}")
                                     .permitAll()
                                     .anyRequest()
                                     .authenticated();
