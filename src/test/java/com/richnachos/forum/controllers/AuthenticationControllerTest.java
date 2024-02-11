@@ -15,8 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -59,7 +58,7 @@ public class AuthenticationControllerTest {
                         .content(mapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token", notNullValue()))
-                .andReturn();
+                .andExpect(jsonPath("$.token", startsWith("ey")));
     }
 
     @Test
@@ -93,7 +92,8 @@ public class AuthenticationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", notNullValue()));
+                .andExpect(jsonPath("$.token", notNullValue()))
+                .andExpect(jsonPath("$.token", startsWith("ey")));
 
         AuthenticationRequest request1 = AuthenticationRequest.builder()
                 .username(username)
@@ -104,8 +104,8 @@ public class AuthenticationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(request1)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", notNullValue()));
-
+                .andExpect(jsonPath("$.token", notNullValue()))
+                .andExpect(jsonPath("$.token", startsWith("ey")));
     }
 
     @Test
@@ -119,7 +119,8 @@ public class AuthenticationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", notNullValue()));
+                .andExpect(jsonPath("$.token", notNullValue()))
+                .andExpect(jsonPath("$.token", startsWith("ey")));
 
         AuthenticationRequest request1 = AuthenticationRequest.builder()
                 .username(username)
