@@ -16,6 +16,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    // For the purposes of this project, I put secret key in the code
+    // In real world scenarios it would be in an external file and not on a public repository for everyone to see
     private static final String SECRET_KEY = "1d7cf501bc399701e6edc81b8c7b63f480a882317bfcd96266e88d5259756490";
     private static final long TOKEN_EXPIRATION = 1000 * 60 * 30; // 30 minutes
 
