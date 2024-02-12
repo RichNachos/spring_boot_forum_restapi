@@ -18,6 +18,7 @@ jobs:
       with:
         java-version: '17'
         distribution: 'temurin'
+        maven-version: 3.9.5
         cache: maven
     
     - name: Build with Maven
