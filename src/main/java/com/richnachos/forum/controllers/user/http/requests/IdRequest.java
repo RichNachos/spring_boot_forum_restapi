@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.user.http.promoteuserbyid;
+package com.richnachos.forum.controllers.user.http.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class PromoteUserByIdRequest {
+@NoArgsConstructor
+public class IdRequest {
     private Long id;
 }

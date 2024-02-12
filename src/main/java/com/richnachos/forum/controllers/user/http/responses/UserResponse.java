@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.user.http.getuserbyusername;
+package com.richnachos.forum.controllers.user.http.responses;
 
 import com.richnachos.forum.controllers.user.UserDTO;
 import lombok.AllArgsConstructor;
@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetUserByUsernameResponse {
+public class UserResponse {
     private UserDTO user;
 }
