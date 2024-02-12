@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.user.http.requests;
+package com.richnachos.forum.controllers.user.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class IdRequest {
-    private Long id;
+public class UsernameRequest {
+    private String username;
 }

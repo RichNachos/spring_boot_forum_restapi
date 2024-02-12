@@ -1,9 +1,9 @@
 package com.richnachos.forum.controllers.user;
 
-import com.richnachos.forum.controllers.user.http.requests.IdRequest;
-import com.richnachos.forum.controllers.user.http.requests.UsernameRequest;
-import com.richnachos.forum.controllers.user.http.responses.UserResponse;
-import com.richnachos.forum.controllers.user.http.responses.UsersResponse;
+import com.richnachos.forum.controllers.user.requests.IdRequest;
+import com.richnachos.forum.controllers.user.requests.UsernameRequest;
+import com.richnachos.forum.controllers.user.responses.UserResponse;
+import com.richnachos.forum.controllers.user.responses.UsersResponse;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.services.UserService;
 import lombok.RequiredArgsConstructor;

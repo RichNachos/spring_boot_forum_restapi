@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.user.http.responses;
+package com.richnachos.forum.controllers.user.responses;
 
 import com.richnachos.forum.controllers.user.UserDTO;
 import lombok.AllArgsConstructor;
@@ -6,12 +6,10 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UsersResponse {
-    private List<UserDTO> users;
+public class UserResponse {
+    private UserDTO user;
 }
