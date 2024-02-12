@@ -31,7 +31,7 @@ public class PostService {
     public List<Post> getPostsByOrderByUploadDateDesc() {
         return postRepository.findAllByOrderByUploadDateDesc();
     }
-    
+
     public Long savePost(String title, String text) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -53,7 +53,6 @@ public class PostService {
         }
         Post post = getPostById(id);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        System.out.println(user.getRole());
         if (post.getPoster().equals(user) || user.getRole() == Role.ADMIN) {
             postRepository.deleteById(id);
             return true;
