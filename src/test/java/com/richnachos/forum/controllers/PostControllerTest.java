@@ -5,7 +5,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.richnachos.forum.ForumApplication;
 import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
 import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
-import com.richnachos.forum.controllers.post.http.newpost.AddPostRequest;
+import com.richnachos.forum.controllers.post.requests.AddPostRequest;
 import com.richnachos.forum.entities.Post;
 import com.richnachos.forum.entities.Role;
 import com.richnachos.forum.entities.User;
@@ -211,15 +211,13 @@ public class PostControllerTest {
         mvc.perform(delete("/posts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.deleted", is(true)));
+                .andExpect(status().isOk());
 
         Assertions.assertFalse(postRepository.findAll().iterator().hasNext());
         mvc.perform(delete("/posts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.deleted", is(false)));
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -234,8 +232,7 @@ public class PostControllerTest {
         mvc.perform(delete("/posts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.deleted", is(false)));
+                .andExpect(status().isForbidden());
 
         Assertions.assertEquals(id, postRepository.findAll().iterator().next().getId());
     }
@@ -252,8 +249,7 @@ public class PostControllerTest {
         mvc.perform(delete("/posts/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.deleted", is(true)));
+                .andExpect(status().isOk());
 
         Assertions.assertFalse(postRepository.findAll().iterator().hasNext());
     }

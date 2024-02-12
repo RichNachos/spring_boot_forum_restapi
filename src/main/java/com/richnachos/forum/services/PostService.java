@@ -31,12 +31,7 @@ public class PostService {
     public List<Post> getPostsByOrderByUploadDateDesc() {
         return postRepository.findAllByOrderByUploadDateDesc();
     }
-
-    public Long savePost(Post post) {
-        postRepository.save(post);
-        return postRepository.findAllByOrderByUploadDateDesc().get(0).getId();
-    }
-
+    
     public Long savePost(String title, String text) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
@@ -45,7 +40,7 @@ public class PostService {
                 .title(title)
                 .text(text)
                 .build();
-        return savePost(post);
+        return postRepository.save(post).getId();
     }
 
     public void updatePost(Post post) {

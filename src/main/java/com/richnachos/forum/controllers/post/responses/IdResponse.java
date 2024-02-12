@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.post.http.newpost;
+package com.richnachos.forum.controllers.post.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddPostResponse {
+public class IdResponse {
     private Long id;
 }

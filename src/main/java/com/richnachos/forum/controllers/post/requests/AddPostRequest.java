@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.post.http.newpost;
+package com.richnachos.forum.controllers.post.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

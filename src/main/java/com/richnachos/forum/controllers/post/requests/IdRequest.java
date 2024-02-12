@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.post.http.deletepost;
+package com.richnachos.forum.controllers.post.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeletePostResponse {
-    private boolean deleted;
+public class IdRequest {
+    private Long id;
 }
