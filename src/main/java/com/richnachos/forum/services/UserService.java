@@ -3,6 +3,7 @@ package com.richnachos.forum.services;
 import com.richnachos.forum.entities.Role;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
     private final UserRepository userRepository;
 

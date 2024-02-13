@@ -31,11 +31,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private Role role;
-
-    @Transient
-    @OneToMany(mappedBy = "poster")
-    private List<Post> posts;
-
+    
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
