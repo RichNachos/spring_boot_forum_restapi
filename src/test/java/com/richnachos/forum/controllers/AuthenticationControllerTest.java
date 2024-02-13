@@ -2,8 +2,7 @@ package com.richnachos.forum.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.richnachos.forum.ForumApplication;
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
-import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
+import com.richnachos.forum.controllers.authentication.requests.AuthenticationRequest;
 import com.richnachos.forum.repositories.UserRepository;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +15,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,7 +54,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void registerUser() throws Exception {
-        RegisterRequest request = RegisterRequest.builder()
+        AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -69,7 +69,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void registerUserWithSameName() throws Exception {
-        RegisterRequest request = RegisterRequest.builder()
+        AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -82,14 +82,13 @@ public class AuthenticationControllerTest {
         mvc.perform(post("/auth/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", is("")));
+                .andExpect(status().isForbidden());
 
     }
 
     @Test
     public void authenticateUserWithCorrectPassword() throws Exception {
-        RegisterRequest request = RegisterRequest.builder()
+        AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(username)
                 .password(password)
                 .build();
@@ -116,7 +115,7 @@ public class AuthenticationControllerTest {
 
     @Test
     public void authenticateUserWithWrongPassword() throws Exception {
-        RegisterRequest request = RegisterRequest.builder()
+        AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(username)
                 .password(password)
                 .build();

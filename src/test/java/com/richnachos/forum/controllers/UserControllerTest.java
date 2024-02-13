@@ -3,7 +3,7 @@ package com.richnachos.forum.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.richnachos.forum.ForumApplication;
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
+import com.richnachos.forum.controllers.authentication.requests.AuthenticationRequest;
 import com.richnachos.forum.entities.Role;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.repositories.UserRepository;

@@ -1,4 +1,4 @@
-package com.richnachos.forum.controllers.authentication.http.auth;
+package com.richnachos.forum.controllers.authentication.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

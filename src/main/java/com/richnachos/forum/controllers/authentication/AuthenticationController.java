@@ -1,10 +1,10 @@
 package com.richnachos.forum.controllers.authentication;
 
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationResponse;
-import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
+import com.richnachos.forum.controllers.authentication.requests.AuthenticationRequest;
+import com.richnachos.forum.controllers.authentication.responses.AuthenticationResponse;
 import com.richnachos.forum.services.AuthenticationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,15 +18,25 @@ public class AuthenticationController {
 
     @PostMapping("/auth/register")
     public ResponseEntity<AuthenticationResponse> register(
-            @RequestBody RegisterRequest request
+            @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.register(request));
+        String token = service.register(request.getUsername(), request.getPassword());
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        AuthenticationResponse response = new AuthenticationResponse(token);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/auth/authenticate")
     public ResponseEntity<AuthenticationResponse> authenticate(
             @RequestBody AuthenticationRequest request
     ) {
-        return ResponseEntity.ok(service.authenticate(request));
+        String token = service.authenticate(request.getUsername(), request.getPassword());
+        if (token == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        AuthenticationResponse response = new AuthenticationResponse(token);
+        return ResponseEntity.ok(response);
     }
 }

@@ -1,8 +1,5 @@
 package com.richnachos.forum.services;
 
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationResponse;
-import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
 import com.richnachos.forum.entities.Role;
 import com.richnachos.forum.entities.User;
 import com.richnachos.forum.repositories.UserRepository;
@@ -21,39 +18,31 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse register(RegisterRequest request) {
-
-        if (userRepository.findUserByUsername(request.getUsername()) != null) {
-            return AuthenticationResponse.builder()
-                    .token("")
-                    .build();
+    // Returns jwt token
+    public String register(String username, String password) {
+        if (userRepository.findUserByUsername(username) != null) {
+            return null;
         }
+
         User user = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .username(username)
+                .password(passwordEncoder.encode(password))
                 .role(Role.USER)
                 .build();
 
         userRepository.save(user);
-        String jwtToken = jwtService.generateToken(user);
-
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        return jwtService.generateToken(user);
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+    public String authenticate(String username, String password) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
+                        username,
+                        password
                 )
         );
-        User user = userRepository.findUserByUsername(request.getUsername());
-        String jwtToken = jwtService.generateToken(user);
 
-        return AuthenticationResponse.builder()
-                .token(jwtToken)
-                .build();
+        User user = userRepository.findUserByUsername(username);
+        return jwtService.generateToken(user);
     }
 }

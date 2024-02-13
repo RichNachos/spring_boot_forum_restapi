@@ -3,8 +3,7 @@ package com.richnachos.forum.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.richnachos.forum.ForumApplication;
-import com.richnachos.forum.controllers.authentication.http.auth.AuthenticationRequest;
-import com.richnachos.forum.controllers.authentication.http.register.RegisterRequest;
+import com.richnachos.forum.controllers.authentication.requests.AuthenticationRequest;
 import com.richnachos.forum.controllers.post.requests.AddPostRequest;
 import com.richnachos.forum.entities.Post;
 import com.richnachos.forum.entities.Role;
@@ -284,7 +283,7 @@ public class PostControllerTest {
 
     // Register i-th user and return token
     private String register(int i) throws Exception {
-        RegisterRequest request = RegisterRequest.builder()
+        AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(users.get(i).getUsername())
                 .password(password)
                 .build();
