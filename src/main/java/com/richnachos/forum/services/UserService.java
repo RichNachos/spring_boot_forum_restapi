@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -24,16 +23,14 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        List<User> users = new ArrayList<>();
-        userRepository.findAll().forEach(users::add);
-        return users;
+        return userRepository.findAll();
     }
 
     public boolean promoteUserById(Long id) {
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User authenticatedUser = getAuthenticatedUser();
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return false;
-        if (currentUser.getRole() == Role.USER) return false;
+        if (authenticatedUser.getRole() == Role.USER) return false;
         if (user.getRole() == Role.ADMIN) return false;
         user.setRole(Role.ADMIN);
         userRepository.save(user);
@@ -41,10 +38,10 @@ public class UserService {
     }
 
     public boolean demoteUserById(Long id) {
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User authenticatedUser = getAuthenticatedUser();
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return false;
-        if (currentUser.getRole() == Role.USER) return false;
+        if (authenticatedUser.getRole() == Role.USER) return false;
         if (user.getRole() == Role.USER) return false;
         user.setRole(Role.USER);
         userRepository.save(user);
@@ -52,10 +49,10 @@ public class UserService {
     }
 
     public boolean deleteUserById(Long id) {
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User authenticatedUser = getAuthenticatedUser();
         User user = userRepository.findById(id).orElse(null);
         if (user == null) return false;
-        if (currentUser.equals(user) || currentUser.getRole() == Role.ADMIN) {
+        if (authenticatedUser.equals(user) || authenticatedUser.getRole() == Role.ADMIN) {
             userRepository.deleteById(id);
             return true;
         }
@@ -63,9 +60,13 @@ public class UserService {
     }
 
     public boolean deleteAllUsers() {
-        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User currentUser = getAuthenticatedUser();
         if (currentUser.getRole() != Role.ADMIN) return false;
         userRepository.deleteAll();
         return true;
+    }
+
+    private User getAuthenticatedUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
