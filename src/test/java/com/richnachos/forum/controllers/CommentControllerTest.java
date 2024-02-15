@@ -24,8 +24,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -93,6 +92,78 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.comments", hasSize(0)));
     }
 
+    @Test
+    public void getAllCommentsShouldBeSizeOne() throws Exception {
+        addUser(0);
+        addPost(0);
+        addComment(0);
+        Long id = postRepository.findAll().get(0).getId();
+        mvc.perform(get("/posts/" + id + "/comments")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comments", hasSize(1)));
+    }
+
+    @Test
+    public void getAllCommentsShouldBeSizeTwo() throws Exception {
+        addUser(0);
+        addPost(0);
+        addComment(0);
+        addComment(1);
+        Long id = postRepository.findAll().get(0).getId();
+        mvc.perform(get("/posts/" + id + "/comments")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comments", hasSize(2)));
+    }
+
+    @Test
+    public void getCommentById() throws Exception {
+        addUser(0);
+        addPost(0);
+        addComment(0);
+        addComment(1);
+        Long post_id = postRepository.findAll().get(0).getId();
+        Comment comment = commentRepository.findAll().get(0);
+        mvc.perform(get("/posts/" + post_id + "/comments/" + comment.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comment.text", is(comment.getText())));
+    }
+
+    @Test
+    public void getNonexistentCommentById() throws Exception {
+        addUser(0);
+        addPost(0);
+        Long post_id = postRepository.findAll().get(0).getId();
+        mvc.perform(get("/posts/" + post_id + "/comments/0")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getNonexistentPostComments() throws Exception {
+        mvc.perform(get("/posts/0/comments")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getNonexistentPostCommentById() throws Exception {
+        mvc.perform(get("/posts/0/comments/0")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+//    @Test
+//    public void addCommentToPost() throws Exception {
+//        addUser(0);
+//        addPost(0);
+//        mvc.perform(get("/posts/0/comments/0")
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isNotFound());
+//    }
+
     // Register i-th user and return token
     private String register(int i) throws Exception {
         AuthenticationRequest request = AuthenticationRequest.builder()
@@ -101,6 +172,21 @@ public class CommentControllerTest {
                 .build();
 
         MvcResult result = mvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.token", startsWith("ey")))
+                .andReturn();
+        return "Bearer " + JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+    }
+
+    private String authenticate(int i) throws Exception {
+        AuthenticationRequest request = AuthenticationRequest.builder()
+                .username(users.get(i).getUsername())
+                .password(password)
+                .build();
+
+        MvcResult result = mvc.perform(post("/auth/authenticate")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsBytes(request)))
                 .andExpect(status().isOk())
