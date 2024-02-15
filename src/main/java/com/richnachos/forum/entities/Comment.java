@@ -31,4 +31,9 @@ public class Comment {
     private String text;
     @Column(name = "upload_date", nullable = false)
     private Date uploadDate;
+
+    @PrePersist
+    protected void onCreate() {
+        uploadDate = new Date();
+    }
 }
