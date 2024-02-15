@@ -107,6 +107,7 @@ public class CommentControllerTest {
     @Test
     public void getAllCommentsShouldBeSizeTwo() throws Exception {
         addUser(0);
+        addUser(1);
         addPost(0);
         addComment(0);
         addComment(1);
@@ -120,6 +121,7 @@ public class CommentControllerTest {
     @Test
     public void getCommentById() throws Exception {
         addUser(0);
+        addUser(1);
         addPost(0);
         addComment(0);
         addComment(1);
