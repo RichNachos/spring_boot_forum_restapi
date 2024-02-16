@@ -127,7 +127,7 @@ public class CommentControllerTest {
         addComment(1);
         Long post_id = postRepository.findAll().get(0).getId();
         Comment comment = commentRepository.findAll().get(0);
-        mvc.perform(get("/posts/" + post_id + "/comments/" + comment.getId())
+        mvc.perform(get("/comments/" + comment.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.comment.text", is(comment.getText())));
@@ -137,8 +137,7 @@ public class CommentControllerTest {
     public void getNonexistentCommentById() throws Exception {
         addUser(0);
         addPost(0);
-        Long post_id = postRepository.findAll().get(0).getId();
-        mvc.perform(get("/posts/" + post_id + "/comments/0")
+        mvc.perform(get("/comments/0")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
@@ -147,15 +146,10 @@ public class CommentControllerTest {
     public void getNonexistentPostComments() throws Exception {
         mvc.perform(get("/posts/0/comments")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.comments", hasSize(0)));
     }
 
-    @Test
-    public void getNonexistentPostCommentById() throws Exception {
-        mvc.perform(get("/posts/0/comments/0")
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
-    }
 
 //    @Test
 //    public void addCommentToPost() throws Exception {
