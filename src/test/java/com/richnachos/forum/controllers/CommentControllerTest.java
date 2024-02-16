@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jayway.jsonpath.JsonPath;
 import com.richnachos.forum.ForumApplication;
 import com.richnachos.forum.controllers.authentication.requests.AuthenticationRequest;
+import com.richnachos.forum.controllers.comment.requests.AddCommentRequest;
 import com.richnachos.forum.entities.Comment;
 import com.richnachos.forum.entities.Post;
 import com.richnachos.forum.entities.Role;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.TestPropertySource;
@@ -125,7 +127,6 @@ public class CommentControllerTest {
         addPost(0);
         addComment(0);
         addComment(1);
-        Long post_id = postRepository.findAll().get(0).getId();
         Comment comment = commentRepository.findAll().get(0);
         mvc.perform(get("/comments/" + comment.getId())
                         .contentType(MediaType.APPLICATION_JSON))
@@ -151,14 +152,22 @@ public class CommentControllerTest {
     }
 
 
-//    @Test
-//    public void addCommentToPost() throws Exception {
-//        addUser(0);
-//        addPost(0);
-//        mvc.perform(get("/posts/0/comments/0")
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isNotFound());
-//    }
+    @Test
+    public void addCommentToPost() throws Exception {
+        addUser(0);
+        String token = authenticate(0);
+        Long postId = addPost(0);
+        AddCommentRequest request = new AddCommentRequest(comments.get(0).getText());
+        MvcResult result = mvc.perform(post("/posts/" + postId + "/comments/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+        Assertions.assertTrue(commentRepository.findById((long) id).isPresent());
+        Assertions.assertEquals(commentRepository.findById((long) id).get().getText(), comments.get(0).getText());
+    }
 
     // Register i-th user and return token
     private String register(int i) throws Exception {
@@ -191,15 +200,15 @@ public class CommentControllerTest {
         return "Bearer " + JsonPath.read(result.getResponse().getContentAsString(), "$.token");
     }
 
-    private void addUser(int i) {
-        userRepository.save(users.get(i));
+    private Long addUser(int i) {
+        return userRepository.save(users.get(i)).getId();
     }
 
-    private void addPost(int i) {
-        postRepository.save(posts.get(i));
+    private Long addPost(int i) {
+        return postRepository.save(posts.get(i)).getId();
     }
 
-    private void addComment(int i) {
-        commentRepository.save(comments.get(i));
+    private Long addComment(int i) {
+        return commentRepository.save(comments.get(i)).getId();
     }
 }
