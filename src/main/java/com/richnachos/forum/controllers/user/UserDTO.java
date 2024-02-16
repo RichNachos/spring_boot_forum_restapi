@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonRootName("user")
+@JsonRootName(value = "user")
 public class UserDTO {
     private Long id;
     private String username;
