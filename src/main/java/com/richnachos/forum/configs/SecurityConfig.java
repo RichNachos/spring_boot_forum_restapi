@@ -28,9 +28,11 @@ public class SecurityConfig {
                             auth
                                     .requestMatchers(HttpMethod.POST, "/auth/**")
                                     .permitAll()
+                                    .requestMatchers(HttpMethod.GET, "/users", "/users/{id}", "/users/{username}")
+                                    .permitAll()
                                     .requestMatchers(HttpMethod.GET, "/posts", "/posts/user/{id}", "/posts/{id}")
                                     .permitAll()
-                                    .requestMatchers(HttpMethod.GET, "/users", "/users/{id}", "/users/{username}")
+                                    .requestMatchers(HttpMethod.GET, "/comments", "/comments/{commentId}", "/posts/{postId}/comments")
                                     .permitAll()
                                     .anyRequest()
                                     .authenticated();
