@@ -31,13 +31,13 @@ public class CommentService {
         return commentRepository.findAllByPost(post);
     }
 
-    public void saveComment(String text, Long postId) {
+    public Long saveComment(String text, Long postId) {
         Comment comment = Comment.builder()
                 .commenter(getAuthenticatedUser())
                 .post(postRepository.findById(postId).orElse(null))
                 .text(text)
                 .build();
-        commentRepository.save(comment);
+        return commentRepository.save(comment).getId();
     }
 
     public boolean deleteComment(Long id) {
