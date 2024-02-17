@@ -27,8 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -153,7 +152,7 @@ public class CommentControllerTest {
 
 
     @Test
-    public void addCommentToPost() throws Exception {
+    public void addComment() throws Exception {
         addUser(0);
         String token = authenticate(0);
         Long postId = addPost(0);
@@ -167,6 +166,42 @@ public class CommentControllerTest {
         int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
         Assertions.assertTrue(commentRepository.findById((long) id).isPresent());
         Assertions.assertEquals(commentRepository.findById((long) id).get().getText(), comments.get(0).getText());
+    }
+
+    @Test
+    public void deleteComment() throws Exception {
+        addUser(0);
+        String token = authenticate(0);
+        addPost(0);
+        Long commentId = addComment(0);
+        mvc.perform(delete("/comments/" + commentId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(commentRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void addAndDeleteComment() throws Exception {
+        addUser(0);
+        String token = authenticate(0);
+        Long postId = addPost(0);
+        AddCommentRequest request = new AddCommentRequest(comments.get(0).getText());
+        MvcResult result = mvc.perform(post("/posts/" + postId + "/comments/add")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token)
+                        .content(mapper.writeValueAsBytes(request)))
+                .andExpect(status().isOk())
+                .andReturn();
+        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
+        Assertions.assertTrue(commentRepository.findById((long) id).isPresent());
+        Assertions.assertEquals(commentRepository.findById((long) id).get().getText(), comments.get(0).getText());
+        mvc.perform(delete("/comments/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isOk());
+        Assertions.assertTrue(commentRepository.findAll().isEmpty());
+
     }
 
     // Register i-th user and return token
