@@ -212,22 +212,6 @@ public class CommentControllerTest {
         Assertions.assertTrue(commentRepository.findAll().isEmpty());
     }
 
-    // Register i-th user and return token
-    private String register(int i) throws Exception {
-        AuthenticationRequest request = AuthenticationRequest.builder()
-                .username(users.get(i).getUsername())
-                .password(password)
-                .build();
-
-        MvcResult result = mvc.perform(post("/auth/register")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsBytes(request)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token", startsWith("ey")))
-                .andReturn();
-        return "Bearer " + JsonPath.read(result.getResponse().getContentAsString(), "$.token");
-    }
-
     private String authenticate(int i) throws Exception {
         AuthenticationRequest request = AuthenticationRequest.builder()
                 .username(users.get(i).getUsername())
