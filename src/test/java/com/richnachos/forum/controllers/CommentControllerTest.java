@@ -182,26 +182,34 @@ public class CommentControllerTest {
     }
 
     @Test
-    public void addAndDeleteComment() throws Exception {
+    public void deleteCommentFromWrongUser() throws Exception {
         addUser(0);
-        String token = authenticate(0);
-        Long postId = addPost(0);
-        AddCommentRequest request = new AddCommentRequest(comments.get(0).getText());
-        MvcResult result = mvc.perform(post("/posts/" + postId + "/comments/add")
+        addUser(1);
+        String token = authenticate(1);
+        addPost(0);
+        Long commentId = addComment(0);
+
+        mvc.perform(delete("/comments/" + commentId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(HttpHeaders.AUTHORIZATION, token)
-                        .content(mapper.writeValueAsBytes(request)))
-                .andExpect(status().isOk())
-                .andReturn();
-        int id = JsonPath.read(result.getResponse().getContentAsString(), "$.id");
-        Assertions.assertTrue(commentRepository.findById((long) id).isPresent());
-        Assertions.assertEquals(commentRepository.findById((long) id).get().getText(), comments.get(0).getText());
-        mvc.perform(delete("/comments/" + id)
+                        .header(HttpHeaders.AUTHORIZATION, token))
+                .andExpect(status().isForbidden());
+        Assertions.assertFalse(commentRepository.findAll().isEmpty());
+        Assertions.assertTrue(commentRepository.findById(commentId).isPresent());
+    }
+
+    @Test
+    public void deleteCommentFromAdmin() throws Exception {
+        addUser(0);
+        addUser(2);
+        String token = authenticate(2);
+        addPost(0);
+        Long commentId = addComment(0);
+
+        mvc.perform(delete("/comments/" + commentId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(HttpHeaders.AUTHORIZATION, token))
                 .andExpect(status().isOk());
         Assertions.assertTrue(commentRepository.findAll().isEmpty());
-
     }
 
     // Register i-th user and return token
